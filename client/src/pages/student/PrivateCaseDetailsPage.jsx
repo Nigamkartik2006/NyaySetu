@@ -12,7 +12,8 @@ import {
   Lock, 
   Loader2, 
   AlertTriangle,
-  Clock
+  Clock,
+  ShieldAlert
 } from 'lucide-react';
 
 const PrivateCaseDetailsPage = () => {
@@ -75,11 +76,20 @@ const PrivateCaseDetailsPage = () => {
               <h1 className="text-2xl font-black text-[#DC4712] font-mono tracking-wider">
                 Case #{caseId}
               </h1>
-              {complaint && (
-                <span className="text-xs font-extrabold px-3 py-1 rounded bg-blue-100 text-blue-900 border border-blue-300">
-                  Status: {complaint.status}
-                </span>
-              )}
+              <div className="flex items-center gap-2">
+                {complaint && (
+                  <span className="text-xs font-extrabold px-3 py-1 rounded bg-blue-100 text-blue-900 border border-blue-300">
+                    Status: {complaint.status}
+                  </span>
+                )}
+                <Link
+                  to={`/student/retaliation?caseId=${caseId}`}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs shadow-sm transition-colors"
+                >
+                  <ShieldAlert className="w-4 h-4" />
+                  <span>Report Retaliation</span>
+                </Link>
+              </div>
             </div>
           </div>
 

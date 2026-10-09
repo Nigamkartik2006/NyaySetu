@@ -17,11 +17,22 @@ import StudentDashboard from './pages/student/StudentDashboard';
 import ReportIncidentPage from './pages/student/ReportIncidentPage';
 import MyComplaintsPage from './pages/student/MyComplaintsPage';
 import PrivateCaseDetailsPage from './pages/student/PrivateCaseDetailsPage';
+import ReportRetaliationPage from './pages/student/ReportRetaliationPage';
+import EvidenceVaultPage from './pages/student/EvidenceVaultPage';
+import ProfilePage from './pages/student/ProfilePage';
+import TrackCasesPage from './pages/student/TrackCasesPage';
 import PlaceholderStudentPage from './pages/student/PlaceholderStudentPage';
 
 // Official & Admin Pages
 import OfficialDashboard from './pages/official/OfficialDashboard';
+import OfficialCaseDetailsPage from './pages/official/OfficialCaseDetailsPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminLayout from './pages/admin/AdminLayout';
+import AdminComplaintsPage from './pages/admin/AdminComplaintsPage';
+import AdminCaseDetailsPage from './pages/admin/AdminCaseDetailsPage';
+import AdminAnalyticsPage from './pages/admin/AdminAnalyticsPage';
+import AdminAuditLogsPage from './pages/admin/AdminAuditLogsPage';
+import AdminRetaliationPage from './pages/admin/AdminRetaliationPage';
 
 function App() {
   return (
@@ -74,7 +85,7 @@ function App() {
             path="/student/track"
             element={
               <ProtectedRoute allowedRoles={['student']}>
-                <MyComplaintsPage />
+                <TrackCasesPage />
               </ProtectedRoute>
             }
           />
@@ -82,7 +93,7 @@ function App() {
             path="/student/retaliation"
             element={
               <ProtectedRoute allowedRoles={['student']}>
-                <PlaceholderStudentPage title="Report Retaliation" />
+                <ReportRetaliationPage />
               </ProtectedRoute>
             }
           />
@@ -90,7 +101,7 @@ function App() {
             path="/student/evidence"
             element={
               <ProtectedRoute allowedRoles={['student']}>
-                <PlaceholderStudentPage title="Evidence Vault" />
+                <EvidenceVaultPage />
               </ProtectedRoute>
             }
           />
@@ -98,12 +109,12 @@ function App() {
             path="/student/profile"
             element={
               <ProtectedRoute allowedRoles={['student']}>
-                <PlaceholderStudentPage title="Profile" />
+                <ProfilePage />
               </ProtectedRoute>
             }
           />
 
-          {/* Protected Official Route */}
+          {/* Protected Official Routes */}
           <Route
             path="/official/dashboard"
             element={
@@ -112,13 +123,73 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/official/complaints/:caseId"
+            element={
+              <ProtectedRoute allowedRoles={['official']}>
+                <OfficialCaseDetailsPage />
+              </ProtectedRoute>
+            }
+          />
 
-          {/* Protected Admin Route */}
+          {/* Protected Admin Routes */}
+          <Route
+            path="/admin"
+            element={<Navigate to="/admin/dashboard" replace />}
+          />
           <Route
             path="/admin/dashboard"
             element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/complaints"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminLayout title="Complaints Directory">
+                  <AdminComplaintsPage />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/complaints/:caseId"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminLayout title="Case Management & Oversight">
+                  <AdminCaseDetailsPage />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/retaliation"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminRetaliationPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/analytics"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminLayout title="Governance Analytics">
+                  <AdminAnalyticsPage />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/audit-logs"
+            element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminLayout title="Security Audit Trail">
+                  <AdminAuditLogsPage />
+                </AdminLayout>
               </ProtectedRoute>
             }
           />

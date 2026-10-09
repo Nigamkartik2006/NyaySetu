@@ -19,13 +19,11 @@ const RegisterPage = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Allow accessing registration page to create new accounts
   useEffect(() => {
-    if (isAuthenticated && user) {
-      if (user.role === 'student') navigate('/student/dashboard');
-      else if (user.role === 'official') navigate('/official/dashboard');
-      else if (user.role === 'admin') navigate('/admin/dashboard');
-    }
-  }, [isAuthenticated, user, navigate]);
+    // If user is logged in and wants to register a new account, clear old error
+    setError('');
+  }, []);
 
   const handleChange = (e) => {
     setFormData((prev) => ({

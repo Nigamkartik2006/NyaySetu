@@ -2,11 +2,17 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const path = require('path');
+const fs = require('fs');
 const { testConnection } = require('./config/db');
 const initializeDatabase = require('./scripts/initDb');
+const { startEscalationScheduler } = require('./services/escalationScheduler');
+
 const authRoutes = require('./routes/authRoutes');
 const complaintRoutes = require('./routes/complaintRoutes');
 const publicRoutes = require('./routes/publicRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+const officialRoutes = require('./routes/officialRoutes');
+const retaliationRoutes = require('./routes/retaliationRoutes');
 
 // Load environment variables
 dotenv.config();
@@ -43,12 +49,27 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/public', publicRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/official', officialRoutes);
+app.use('/api/retaliation', retaliationRoutes);
 
-// 404 Handler
-app.use((req, res) => {
+// Serve production static assets from client/dist (Unified Deployment Mode)
+const clientBuildPath = path.join(__dirname, '../client/dist');
+if (fs.existsSync(clientBuildPath)) {
+  app.use(express.static(clientBuildPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+}
+
+// 404 Handler for API routes
+app.use('/api/*', (req, res) => {
   res.status(404).json({
     success: false,
-    message: `Route ${req.originalUrl} not found.`
+    message: `API Route ${req.originalUrl} not found.`
   });
 });
 
@@ -74,6 +95,9 @@ async function startServer() {
     console.error('CRITICAL: Unable to establish database connection. Server starting aborted.');
     process.exit(1);
   }
+
+  // Start background Escalation Timer Scheduler (2-minute demo deadline runner)
+  startEscalationScheduler();
 
   app.listen(PORT, () => {
     console.log(`====================================================`);

@@ -1,0 +1,21 @@
+{
+  "name": "nyaysetu-platform",
+  "version": "1.0.0",
+  "description": "NyaySetu — Campus Grievance, Incident Reporting, Evidence Vault & SLA Protection System",
+  "main": "server/server.js",
+  "scripts": {
+    "postinstall": "cd server && npm install && cd ../client && npm install",
+    "build": "cd client && npm run build",
+    "start": "cd server && node server.js",
+    "dev": "npm run start"
+  },
+  "keywords": [
+    "nyaysetu",
+    "campus-grievance",
+    "ragging-reporting",
+    "sla-escalation",
+    "evidence-vault"
+  ],
+  "author": "NyaySetu Team",
+  "license": "MIT"
+}

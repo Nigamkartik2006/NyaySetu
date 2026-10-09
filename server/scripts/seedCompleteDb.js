@@ -104,7 +104,7 @@ async function seedCompleteDatabase() {
       ['System Administrator', 'admin@campusguard.edu', adminHash, 'admin', null],
       ['Dr. Evelyn Vance', 'official@campusguard.edu', officialHash, 'official', null],
       ['Aarav Sharma', 'student@campusguard.edu', studentHash, 'student', 'STU-2026-001'],
-      ['Kartik Nigam', 'kartiknigam31@gmail.com', kartikHash, 'student', '2401430100115'],
+      ['Kartik Nigam', 'k525ing@gmail.com', kartikHash, 'student', '2401430100115'],
       ['Gulshan Kumar', 'gulshan@nyaysetu.edu', studentHash, 'student', 'STU-2026-042']
     ];
 

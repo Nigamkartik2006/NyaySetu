@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import { complaintApi } from '../../services/api';
-import { FileText, PlusCircle, ArrowRight, Loader2, Paperclip, AlertTriangle } from 'lucide-react';
+import { FileText, PlusCircle, ArrowRight, Loader2, Paperclip, AlertTriangle, ShieldAlert } from 'lucide-react';
 
 const MyComplaintsPage = () => {
   const [complaints, setComplaints] = useState([]);
@@ -136,13 +136,23 @@ const MyComplaintsPage = () => {
                     </div>
                   </div>
 
-                  <Link
-                    to={`/student/complaints/${item.case_id}`}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#F1E9E3] hover:bg-slate-200 text-[#DC4712] font-bold text-xs transition-colors shrink-0"
-                  >
-                    <span>View Case Details</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <Link
+                      to={`/student/retaliation?caseId=${item.case_id}`}
+                      className="inline-flex items-center gap-1 px-3 py-2 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs transition-colors"
+                    >
+                      <ShieldAlert className="w-3.5 h-3.5" />
+                      <span>Retaliation</span>
+                    </Link>
+
+                    <Link
+                      to={`/student/complaints/${item.case_id}`}
+                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#F1E9E3] hover:bg-slate-200 text-[#DC4712] font-bold text-xs transition-colors"
+                    >
+                      <span>View Case Details</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>
                 </div>
               ))}
             </div>

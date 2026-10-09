@@ -28,9 +28,9 @@ const Sidebar = () => {
     { name: 'My Complaints', path: '/student/complaints', icon: FileText },
     { name: 'Track Cases', path: '/student/track', icon: Search },
     { name: 'Public Cases', path: '/public/complaints', icon: Eye },
-    { name: 'Report Retaliation', path: '/student/retaliation', icon: ShieldAlert, comingSoon: true },
-    { name: 'Evidence Vault', path: '/student/evidence', icon: FolderLock, comingSoon: true },
-    { name: 'Profile', path: '/student/profile', icon: User, comingSoon: true },
+    { name: 'Report Retaliation', path: '/student/retaliation', icon: ShieldAlert },
+    { name: 'Evidence Vault', path: '/student/evidence', icon: FolderLock },
+    { name: 'Profile', path: '/student/profile', icon: User },
   ];
 
   return (

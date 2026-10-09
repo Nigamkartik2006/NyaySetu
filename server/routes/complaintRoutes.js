@@ -22,6 +22,13 @@ router.get(
 );
 
 router.get(
+  '/vault/all',
+  authMiddleware,
+  requireRole('student'),
+  complaintController.getStudentEvidenceVault
+);
+
+router.get(
   '/:caseId',
   authMiddleware,
   requireRole('student'),

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { GraduationCap, Building2, ShieldAlert, Lock, Mail, KeyRound, AlertCircle, Loader2 } from 'lucide-react';
+import { GraduationCap, Building2, ShieldAlert, Lock, Mail, KeyRound, AlertCircle, Loader2, Key } from 'lucide-react';
 
 const LoginPage = () => {
   const [searchParams] = useSearchParams();
@@ -26,13 +26,16 @@ const LoginPage = () => {
     }
   }, [searchParams]);
 
+  // CRITICAL FIX: Only auto-redirect if the active logged-in user's role MATCHES the selectedRole tab!
   useEffect(() => {
     if (isAuthenticated && user) {
-      if (user.role === 'student') navigate('/student/dashboard');
-      else if (user.role === 'official') navigate('/official/dashboard');
-      else if (user.role === 'admin') navigate('/admin/dashboard');
+      if (user.role === selectedRole) {
+        if (user.role === 'student') navigate('/student/dashboard');
+        else if (user.role === 'official') navigate('/official/dashboard');
+        else if (user.role === 'admin') navigate('/admin/dashboard');
+      }
     }
-  }, [isAuthenticated, user, navigate]);
+  }, [isAuthenticated, user, selectedRole, navigate]);
 
   const handleChange = (e) => {
     setFormData((prev) => ({
@@ -40,6 +43,17 @@ const LoginPage = () => {
       [e.target.name]: e.target.value
     }));
     if (error) setError('');
+  };
+
+  const handleQuickFill = (role) => {
+    if (role === 'admin') {
+      setFormData({ email: 'admin@campusguard.edu', password: 'Admin@123' });
+    } else if (role === 'official') {
+      setFormData({ email: 'official@campusguard.edu', password: 'Official@123' });
+    } else {
+      setFormData({ email: 'student@campusguard.edu', password: 'Student@123' });
+    }
+    setError('');
   };
 
   const handleSubmit = async (e) => {
@@ -59,7 +73,7 @@ const LoginPage = () => {
       else if (loggedUser.role === 'admin') navigate('/admin/dashboard');
     } catch (err) {
       if (err.message.includes('authorized') || err.message.includes('role')) {
-        setError('You are not authorized to access this role.');
+        setError(err.message || 'You are not authorized to access this role.');
       } else if (err.message.includes('Invalid') || err.status === 401) {
         setError('Invalid email or password.');
       } else {
@@ -123,6 +137,21 @@ const LoginPage = () => {
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Quick Fill Credentials Banner */}
+          <div className="mb-4 p-2.5 bg-[#F1E9E3] border border-[#e2d7cd] rounded-lg flex items-center justify-between text-xs">
+            <span className="font-bold text-slate-700 flex items-center gap-1">
+              <Key className="w-3.5 h-3.5 text-[#EE712B]" />
+              <span>Demo Login:</span>
+            </span>
+            <button
+              type="button"
+              onClick={() => handleQuickFill(selectedRole)}
+              className="px-2.5 py-1 bg-white hover:bg-orange-50 text-[#DC4712] font-bold rounded border border-orange-200 text-[11px] transition-colors"
+            >
+              Fill {selectedRole.toUpperCase()} Credentials
+            </button>
           </div>
 
           {/* Error Banner */}

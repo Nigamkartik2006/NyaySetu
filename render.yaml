@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: nyaysetu-platform
+    env: node
+    buildCommand: npm run postinstall && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: 587
+      - key: SMTP_USER
+        value: k525ing@gmail.com
+      - key: SMTP_PASS
+        value: xdkvaotfgazmgkmg
+      - key: ESCALATION_EMAIL_RECIPIENT
+        value: k525ing@gmail.com
+      - key: OVERSIGHT_EMAIL_RECIPIENT
+        value: k525ing@gmail.com
+      - key: COMPLAINT_RESPONSE_TIMEOUT_MINUTES
+        value: 1440
+      - key: JWT_SECRET
+        value: campus_guard_super_secret_jwt_key_2026_secure

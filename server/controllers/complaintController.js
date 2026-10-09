@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const { pool } = require('../config/db');
 const { calculateFileHash, uploadDir } = require('../middleware/uploadMiddleware');
+const { sendImmediateDangerAlertEmail } = require('../services/emailService');
 
 // Helper to generate unique Case ID (Format: CMP-2026-XXXXXX)
 function generateCaseId() {
@@ -128,6 +129,30 @@ async function createComplaint(req, res) {
 
     console.log(`[Complaint Created] Case ID: ${caseId}, Complainant ID: ${userId}, Attached Evidence Files: ${evidenceRecords.length}`);
 
+    // If Immediate Danger is flagged, send immediate emergency email to higher authorities & oversight committee
+    if (danger_status === 'Yes') {
+      try {
+        const [studentRows] = await pool.query(
+          'SELECT full_name, email, student_id FROM users WHERE id = ?',
+          [userId]
+        );
+        const student = studentRows[0] || {};
+
+        sendImmediateDangerAlertEmail({
+          caseId,
+          category: category.trim(),
+          incidentLocation: incident_location.trim(),
+          incidentDate: incident_date,
+          description: description.trim(),
+          studentName: student.full_name,
+          studentEmail: student.email,
+          studentIdNumber: student.student_id
+        }).catch((err) => console.error('[Immediate Danger Alert Email Error]:', err));
+      } catch (emailErr) {
+        console.error('[Error fetching user for danger alert]:', emailErr);
+      }
+    }
+
     return res.status(201).json({
       success: true,
       message: 'Complaint submitted successfully.',
@@ -187,6 +212,44 @@ async function getMyComplaints(req, res) {
     return res.status(500).json({
       success: false,
       message: 'Failed to retrieve your complaints.'
+    });
+  }
+}
+
+/**
+ * Get all evidence files across all complaints submitted by logged-in student (Student Only)
+ */
+async function getStudentEvidenceVault(req, res) {
+  try {
+    const userId = req.user.userId || req.user.id;
+
+    const [rows] = await pool.query(
+      `SELECT 
+        e.id, e.complaint_id, e.original_filename, e.stored_filename,
+        e.mime_type, e.file_size, e.file_hash, e.uploaded_at, e.is_active,
+        c.case_id, c.category AS complaint_category, c.status AS complaint_status
+      FROM evidence e
+      JOIN complaints c ON e.complaint_id = c.id
+      WHERE c.complainant_id = ? AND e.is_active = 1
+      ORDER BY e.uploaded_at DESC`,
+      [userId]
+    );
+
+    const totalBytes = rows.reduce((acc, curr) => acc + Number(curr.file_size || 0), 0);
+
+    return res.status(200).json({
+      success: true,
+      evidence: rows,
+      stats: {
+        total_files: rows.length,
+        total_bytes: totalBytes
+      }
+    });
+  } catch (error) {
+    console.error('[getStudentEvidenceVault Error]:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve your evidence vault.'
     });
   }
 }
@@ -376,6 +439,7 @@ async function getPublicComplaintByCaseId(req, res) {
 module.exports = {
   createComplaint,
   getMyComplaints,
+  getStudentEvidenceVault,
   getPrivateComplaintByCaseId,
   downloadEvidenceFile,
   removeEvidenceFile,
